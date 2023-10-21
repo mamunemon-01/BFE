@@ -1,7 +1,15 @@
+import torch
 from torchvision import transforms
 import numpy as np
 from facenet_pytorch import fixed_image_standardization
-from PIL import ImageDraw
+from PIL import Image, ImageFont, ImageDraw
+import os
+
+
+ABS_PATH = os.path.dirname(__file__)
+#print(ABS_PATH, end='\n\n')
+
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def diag(x1, y1, x2, y2):
     return np.linalg.norm([x2 - x1, y2 - y1])
@@ -34,7 +42,7 @@ def isOverlap(rect1, rect2):
     return False
 
 def draw_box(draw, boxes, names, probs, min_p=0.89):
-    font = ImageFont.truetype(os.path.join(ABS_PATH, 'arial.ttf'), size=22)
+    font = ImageFont.truetype(os.path.join(ABS_PATH, 'arial.ttf'), size=28)
 
     not_overlap_inds = []
     for i in range(len(boxes)):
@@ -70,18 +78,20 @@ def get_video_embedding(model, x):
     embeds = model(x.to(device))
     return embeds.detach().cpu().numpy()
 
-def face_extract(model, clf, frame, boxes):
+def face_extract(model, clf, expressions, frame, boxes):
     names, prob = [], []
     if len(boxes):
         x = torch.stack([standard_transform(frame.crop(b)) for b in boxes])
         embeds = get_video_embedding(model, x)
         idx, prob = clf.predict(embeds), clf.predict_proba(embeds).max(axis=1)
-        names = [IDX_TO_CLASS[idx_] for idx_ in idx]
+        #names = [IDX_TO_CLASS[idx_] for idx_ in idx]
+        names = [expressions[idx_] for idx_ in idx]
     return names, prob
 
-def preprocess_image(detector, face_extractor, clf, path, transform=None):
+def preprocess_image(detector, face_extractor, clf, expressions, path, transform=None):
     if not transform: transform = lambda x: x.resize((1280, 1280)) if (np.array(x.size) > 2000).all() else x
     capture = Image.open(path).convert('RGB')
+    # capture = Image.fromarray(path).convert('RGB')
     i = 0
 
     # iframe = Image.fromarray(transform(np.array(capture)))
@@ -89,19 +99,20 @@ def preprocess_image(detector, face_extractor, clf, path, transform=None):
 
     boxes, probs = detector.detect(iframe)
     if boxes is None: boxes, probs = [], []
-    names, prob = face_extract(face_extractor, clf, iframe, boxes)
+    names, prob = face_extract(face_extractor, clf, expressions, iframe, boxes)
 
     frame_draw = iframe.copy()
     draw = ImageDraw.Draw(frame_draw)
 
     boxes, probs = draw_box(draw, boxes, names, probs)
-    return frame_draw.resize((620, 480), Image.BILINEAR)
+    #return frame_draw.resize((620, 480), Image.BILINEAR)
+    return frame_draw.resize(Image.BILINEAR)
     #return frame_draw.resize((256, 256), Image.BILINEAR)
 
 
 def preprocess_video(detector, face_extractor, clf, path, transform=None, k=3):
     frames = []
-    if not transform: transform = lambda x: x.resize((1280, 1280)) if (np.array(x.shape) > 2000).all() else x
+    if not transform: transform = lambda x: x.resize((1280, 1024)) if (np.array(x.shape) > 2000).all() else x
     capture = cv2.VideoCapture(path)
     i = 0
     while True:
