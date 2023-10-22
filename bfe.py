@@ -11,7 +11,7 @@ st.markdown('<h1 style="color:blue;">Bangladeshi Masked Facial Expression Recogn
 st.markdown('<h2 style="color:gray;">Our model classifies facial expressions into the following categories:</h2>', unsafe_allow_html = True)
 st.markdown('<h3 style="color:gray;">Happiness, Sadnesss and Other</h3>', unsafe_allow_html = True)
 
-upload = st.file_uploader('Insert image for classification:', type = ['png', 'jpg', 'jpeg'])
+upload = st.file_uploader('Insert image for classification:', type = ['png', 'jpg'])
 #print(upload, end= '\n\n')
 
 #c1, c2 = st.columns(2)
