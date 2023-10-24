@@ -51,4 +51,4 @@ if upload is not None:
 	frame = util.preprocess_image(mtcnn, model, cmodel, IDX_TO_CLASS, upload)
 	#print(type(frame))
 	#print(frame.size)
-	c2.image(frame.resize((width, height)))
+	c2.image(frame.resize((width, height), Image.BILINEAR))

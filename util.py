@@ -106,7 +106,7 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
 
     boxes, probs = draw_box(draw, boxes, names, probs)
     #return frame_draw.resize((620, 480), Image.BILINEAR)
-    return frame_draw.resize(Image.BILINEAR)
+    return frame_draw#.resize((1280, 720), Image.BILINEAR)
     #return frame_draw.resize((256, 256), Image.BILINEAR)
 
 
