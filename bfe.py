@@ -7,7 +7,7 @@ import os#, sys
 #import torch
 import util
 
-st.markdown('<h1 style="color:blue;">Bangladeshi Masked Facial Expression Recognition</h1>', unsafe_allow_html = True)
+st.markdown('<h1 style="color:blue;">A Machine Learning Approach to Recognize Masked Facial Expressions of the Bangladeshi People</h1>', unsafe_allow_html = True)
 st.markdown('<h2 style="color:gray;">Our model classifies facial expressions into the following categories:</h2>', unsafe_allow_html = True)
 st.markdown('<h3 style="color:gray;">Happiness, Sadnesss and Other</h3>', unsafe_allow_html = True)
 
@@ -49,6 +49,7 @@ if upload is not None:
 	# Predict the output here
 	c2.header("Output")
 	frame = util.preprocess_image(mtcnn, model, cmodel, IDX_TO_CLASS, upload)
+	#frame.save("withoutmask.jpg")
 	#print(type(frame))
 	#print(frame.size)
 	c2.image(frame.resize((width, height), Image.BILINEAR))
