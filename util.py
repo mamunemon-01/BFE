@@ -96,6 +96,15 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
     # capture = Image.fromarray(path).convert('RGB')
     #i = 0
 
+    #capture_rgb = cv2.cvtColor(capture, cv2.COLOR_BGR2RGB)
+
+    # iframe = Image.fromarray(transform(np.array(capture)))
+    iframe = transform(capture)
+
+    #capture_pil = Image.fromarray(capture_rgb)
+    #iframe = transform(capture_pil)#.convert('RGB'))
+    #iframe = transform(Image.fromarray(capture_rgb))
+    
     if detector == "MTCNN":
         mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
         #boxes, probs = detector.detect(iframe)
@@ -132,15 +141,6 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
             if confidence > 0.5:
                 boxes.append(box)
                 probs.append(confidence)
-
-    #capture_rgb = cv2.cvtColor(capture, cv2.COLOR_BGR2RGB)
-
-    # iframe = Image.fromarray(transform(np.array(capture)))
-    iframe = transform(capture)
-
-    #capture_pil = Image.fromarray(capture_rgb)
-    #iframe = transform(capture_pil)#.convert('RGB'))
-    #iframe = transform(Image.fromarray(capture_rgb))
 
     names, prob = face_extract(face_extractor, clf, expressions, iframe, boxes)
 
