@@ -96,10 +96,42 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
     # capture = Image.fromarray(path).convert('RGB')
     #i = 0
 
-    opencv_capture = np.array(capture)
-    opencv_capture = opencv_capture[:, :, ::-1].copy() # Converting from rgb to bgr
-    (h, w) = opencv_capture.shape[:2]
-    #(h, w) = capture.shape[:2]
+    if detector == "MTCNN":
+        mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
+        #boxes, probs = detector.detect(iframe)
+        boxes, probs = mtcnn.detect(iframe)
+        if boxes is None: boxes, probs = [], []
+    else:
+        PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
+        CAFFEMODEL_PATH = os.path.join(ABS_PATH + '/caffe_model_data/weights.caffemodel')
+
+        caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
+
+        caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+        caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+
+        opencv_capture = np.array(capture)
+        opencv_capture = opencv_capture[:, :, ::-1].copy() # Converting from rgb to bgr
+        (h, w) = opencv_capture.shape[:2]
+        #(h, w) = capture.shape[:2]
+
+        capture_blob = cv2.dnn.blobFromImage(opencv_capture)
+        #capture_blob = cv2.dnn.blobFromImage(np.array(capture))
+
+        #detector.setInput(capture_blob)
+        #detections = detector.forward()
+        caffe_model.setInput(capture_blob)
+        detections = caffe_model.forward()
+
+        boxes, probs = [], []
+
+        for i in range(0, detections.shape[2]):
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+
+            confidence = detections[0, 0, i, 2]
+            if confidence > 0.5:
+                boxes.append(box)
+                probs.append(confidence)
 
     #capture_rgb = cv2.cvtColor(capture, cv2.COLOR_BGR2RGB)
 
@@ -109,25 +141,6 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
     #capture_pil = Image.fromarray(capture_rgb)
     #iframe = transform(capture_pil)#.convert('RGB'))
     #iframe = transform(Image.fromarray(capture_rgb))
-
-    #boxes, probs = detector.detect(iframe)
-    #if boxes is None: boxes, probs = [], []
-
-    capture_blob = cv2.dnn.blobFromImage(opencv_capture)
-    #capture_blob = cv2.dnn.blobFromImage(np.array(capture))
-
-    detector.setInput(capture_blob)
-    detections = detector.forward()
-
-    boxes, probs = [], []
-
-    for i in range(0, detections.shape[2]):
-            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-
-            confidence = detections[0, 0, i, 2]
-            if confidence > 0.5:
-                boxes.append(box)
-                probs.append(confidence)
 
     names, prob = face_extract(face_extractor, clf, expressions, iframe, boxes)
 
