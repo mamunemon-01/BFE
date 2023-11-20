@@ -5,6 +5,7 @@ from facenet_pytorch import fixed_image_standardization, MTCNN, InceptionResnetV
 from PIL import Image, ImageFont, ImageDraw
 import os
 import cv2
+import joblib
 
 
 ABS_PATH = os.path.dirname(__file__)

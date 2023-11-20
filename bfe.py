@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 from PIL import Image#, ImageFont
 #from facenet_pytorch import InceptionResnetV1#, MTCNN, fixed_image_standardization
-import joblib
+#import joblib
 import os#, sys
 #import torch
 import util
