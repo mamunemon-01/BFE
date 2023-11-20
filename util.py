@@ -10,6 +10,8 @@ import cv2
 ABS_PATH = os.path.dirname(__file__)
 #print(ABS_PATH, end='\n\n')
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
 
 PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
@@ -19,8 +21,6 @@ caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
 
 caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
 caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def diag(x1, y1, x2, y2):
     return np.linalg.norm([x2 - x1, y2 - y1])
