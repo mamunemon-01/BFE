@@ -6,12 +6,16 @@ from PIL import Image, ImageFont, ImageDraw
 import os
 import cv2
 import joblib
+#import streamlit as st
 
 
 ABS_PATH = os.path.dirname(__file__)
 #print(ABS_PATH, end='\n\n')
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
+print("hehe")
+#@st.cache
 
 mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
 
@@ -130,12 +134,15 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
         boxes, probs = mtcnn.detect(iframe)
         if boxes is None: boxes, probs = [], []
     else:
-        opencv_capture = np.array(capture)
-        opencv_capture = opencv_capture[:, :, ::-1].copy() # Converting from rgb to bgr
-        (h, w) = opencv_capture.shape[:2]
-        #(h, w) = capture.shape[:2]
+        #opencv_capture = np.array(capture)
+        #opencv_capture = opencv_capture[:, :, ::-1].copy() # Converting from rgb to bgr
+        #(h, w) = opencv_capture.shape[:2]
+        capture = np.array(capture)
+        capture = capture[:, :, ::-1].copy() # Converting from rgb to bgr
+        (h, w) = capture.shape[:2]
 
-        capture_blob = cv2.dnn.blobFromImage(opencv_capture)
+        #capture_blob = cv2.dnn.blobFromImage(opencv_capture)
+        capture_blob = cv2.dnn.blobFromImage(capture)
         #capture_blob = cv2.dnn.blobFromImage(np.array(capture))
 
         #detector.setInput(capture_blob)
