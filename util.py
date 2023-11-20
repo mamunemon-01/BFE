@@ -4,6 +4,7 @@ import numpy as np
 from facenet_pytorch import fixed_image_standardization
 from PIL import Image, ImageFont, ImageDraw
 import os
+import cv2
 
 
 ABS_PATH = os.path.dirname(__file__)
@@ -90,15 +91,41 @@ def face_extract(model, clf, expressions, frame, boxes):
 
 def preprocess_image(detector, face_extractor, clf, expressions, path, transform=None):
     if not transform: transform = lambda x: x.resize((1280, 1280)) if (np.array(x.size) > 2000).all() else x
-    capture = Image.open(path).convert('RGB')
+    #capture = Image.open(path).convert('RGB')
+    capture = cv2.imread(path)
     # capture = Image.fromarray(path).convert('RGB')
-    i = 0
+    #i = 0
+
+    (h, w) = capture.shape[:2]
+
+    capture_rgb = cv2.cvtColor(capture, cv2.COLOR_BGR2RGB)
 
     # iframe = Image.fromarray(transform(np.array(capture)))
-    iframe = transform(capture)
+    #iframe = transform(capture)
 
-    boxes, probs = detector.detect(iframe)
-    if boxes is None: boxes, probs = [], []
+    #capture_pil = Image.fromarray(capture_rgb)
+    #iframe = transform(capture_pil)#.convert('RGB'))
+    iframe = transform(Image.fromarray(capture_rgb))
+
+    #boxes, probs = detector.detect(iframe)
+    #if boxes is None: boxes, probs = [], []
+
+    capture_blob = cv2.dnn.blobFromImage(capture)
+    #capture_blob = cv2.dnn.blobFromImage(np.array(capture))
+
+    detector.setInput(capture_blob)
+    detections = detector.forward()
+
+    boxes, probs = [], []
+
+    for i in range(0, detections.shape[2]):
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+
+            confidence = detections[0, 0, i, 2]
+            if confidence > 0.5:
+                boxes.append(box)
+                probs.append(confidence)
+
     names, prob = face_extract(face_extractor, clf, expressions, iframe, boxes)
 
     frame_draw = iframe.copy()

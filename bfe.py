@@ -2,11 +2,12 @@ import torch
 import streamlit as st
 import numpy as np
 from PIL import Image#, ImageFont
-from facenet_pytorch import MTCNN, InceptionResnetV1#, fixed_image_standardization
+from facenet_pytorch import InceptionResnetV1#, MTCNN, fixed_image_standardization
 import joblib
 import os#, sys
 #import torch
 import util
+import cv2
 
 st.markdown('<h1 style="color:blue;">A Machine Learning Approach to Recognize Masked Facial Expressions of the Bangladeshi People</h1>', unsafe_allow_html = True)
 st.markdown('<h2 style="color:gray;">Our model classifies facial expressions into the following categories:</h2>', unsafe_allow_html = True)
@@ -25,7 +26,15 @@ c2 = st.container()
 #font = ImageFont.truetype(os.path.join(ABS_PATH, 'arial.ttf'), size=22)
 #font = ImageFont.truetype('arial.ttf', size=22)
 
-mtcnn = MTCNN(keep_all=True, min_face_size=70, device=util.device)
+PROTOTXT_PATH = os.path.join(util.ABS_PATH + '/caffe_model_data/deploy.prototxt')
+CAFFEMODEL_PATH = os.path.join(util.ABS_PATH + '/caffe_model_data/weights.caffemodel')
+
+caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
+
+caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+
+#mtcnn = MTCNN(keep_all=True, min_face_size=70, device=util.device)
 model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=util.device).eval()
 
 C_SVM_PATH = os.path.join(util.ABS_PATH, 'sgdc_calibrated0.sav')
@@ -49,7 +58,8 @@ if upload is not None:
 	#print(img.size)
 	# Predict the output here
 	c2.header("Output")
-	frame = util.preprocess_image(mtcnn, model, cmodel, IDX_TO_CLASS, upload)
+	#frame = util.preprocess_image(mtcnn, model, cmodel, IDX_TO_CLASS, upload)
+	frame = util.preprocess_image(caffe_model, model, cmodel, IDX_TO_CLASS, upload)
 	#frame.save("withoutmask.jpg")
 	#print(type(frame))
 	#print(frame.size)
