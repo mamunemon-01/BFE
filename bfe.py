@@ -13,7 +13,8 @@ st.markdown('<h1 style="color:blue;">A Machine Learning Approach to Recognize Ma
 st.markdown('<h2 style="color:gray;">Our model classifies facial expressions into the following categories:</h2>', unsafe_allow_html = True)
 st.markdown('<h3 style="color:gray;">Happiness, Sadnesss and Other</h3>', unsafe_allow_html = True)
 
-model_name = st.selectbox("Choose a Face Detection Model", ("MTCNN", "Caffe Model"))
+#model_name = st.selectbox("Choose a Face Detection Model", ("MTCNN", "Caffe Model"))
+model_name = st.radio("Choose a Face Detection Model", ("MTCNN", "Caffe Model"))
 
 upload = st.file_uploader('Insert image for classification:', type = ['png', 'jpg'])
 #print(upload, end= '\n\n')
