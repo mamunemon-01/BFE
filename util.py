@@ -22,6 +22,15 @@ caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
 caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
 caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
+model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=device).eval()
+
+C_SVM_PATH = os.path.join(ABS_PATH, 'sgdc_calibrated0.sav')
+#print(C_SVM_PATH, end = '\n\n')
+cmodel = joblib.load(C_SVM_PATH)
+
+IDX2CLS = os.path.join(ABS_PATH, 'idx2cls.npy')
+IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
+
 def diag(x1, y1, x2, y2):
     return np.linalg.norm([x2 - x1, y2 - y1])
 
