@@ -10,6 +10,16 @@ import cv2
 ABS_PATH = os.path.dirname(__file__)
 #print(ABS_PATH, end='\n\n')
 
+mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
+
+PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
+CAFFEMODEL_PATH = os.path.join(ABS_PATH + '/caffe_model_data/weights.caffemodel')
+
+caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
+
+caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def diag(x1, y1, x2, y2):
@@ -106,19 +116,10 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
     #iframe = transform(Image.fromarray(capture_rgb))
     
     if detector == "MTCNN":
-        mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
         #boxes, probs = detector.detect(iframe)
         boxes, probs = mtcnn.detect(iframe)
         if boxes is None: boxes, probs = [], []
     else:
-        PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
-        CAFFEMODEL_PATH = os.path.join(ABS_PATH + '/caffe_model_data/weights.caffemodel')
-
-        caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
-
-        caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-        caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-
         opencv_capture = np.array(capture)
         opencv_capture = opencv_capture[:, :, ::-1].copy() # Converting from rgb to bgr
         (h, w) = opencv_capture.shape[:2]
