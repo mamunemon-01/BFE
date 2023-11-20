@@ -1,7 +1,7 @@
 import torch
 from torchvision import transforms
 import numpy as np
-from facenet_pytorch import fixed_image_standardization, MTCNN
+from facenet_pytorch import fixed_image_standardization, MTCNN, InceptionResnetV1
 from PIL import Image, ImageFont, ImageDraw
 import os
 import cv2

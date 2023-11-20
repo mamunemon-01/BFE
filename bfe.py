@@ -2,7 +2,7 @@ import torch
 import streamlit as st
 import numpy as np
 from PIL import Image#, ImageFont
-from facenet_pytorch import InceptionResnetV1#, MTCNN, fixed_image_standardization
+#from facenet_pytorch import InceptionResnetV1#, MTCNN, fixed_image_standardization
 import joblib
 import os#, sys
 #import torch
@@ -29,15 +29,7 @@ c2 = st.container()
 #font = ImageFont.truetype(os.path.join(ABS_PATH, 'arial.ttf'), size=22)
 #font = ImageFont.truetype('arial.ttf', size=22)
 
-model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=util.device).eval()
-
-C_SVM_PATH = os.path.join(util.ABS_PATH, 'sgdc_calibrated0.sav')
-#print(C_SVM_PATH, end = '\n\n')
-cmodel = joblib.load(C_SVM_PATH)
 #cmodel = joblib.load('./sgdc_calibrated0.sav')
-
-IDX2CLS = os.path.join(util.ABS_PATH, 'idx2cls.npy')
-IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
 
 if upload is not None:
 	img = Image.open(upload)
@@ -54,7 +46,7 @@ if upload is not None:
 	c2.header("Output")
 	#frame = util.preprocess_image(mtcnn, model, cmodel, IDX_TO_CLASS, upload)
 	#frame = util.preprocess_image(caffe_model, model, cmodel, IDX_TO_CLASS, upload)
-	frame = util.preprocess_image(model_name, model, cmodel, IDX_TO_CLASS, upload)
+	frame = util.preprocess_image(model_name, util.model, util.cmodel, util.IDX_TO_CLASS, upload)
 	#frame.save("withoutmask.jpg")
 	#print(type(frame))
 	#print(frame.size)
