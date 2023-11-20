@@ -114,7 +114,8 @@ def face_extract(model, clf, expressions, frame, boxes):
 
 def preprocess_image(detector, face_extractor, clf, expressions, path, transform=None):
     if not transform: transform = lambda x: x.resize((1280, 1280)) if (np.array(x.size) > 2000).all() else x
-    capture = Image.open(path).convert('RGB')
+    #capture = Image.open(path).convert('RGB')
+    capture = Image.open(path)
     #capture = cv2.imread(path) doesn't work here
     # capture = Image.fromarray(path).convert('RGB')
     #i = 0
@@ -122,7 +123,7 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
     #capture_rgb = cv2.cvtColor(capture, cv2.COLOR_BGR2RGB)
 
     # iframe = Image.fromarray(transform(np.array(capture)))
-    iframe = transform(capture)
+    iframe = transform(capture.convert('RGB'))
 
     #capture_pil = Image.fromarray(capture_rgb)
     #iframe = transform(capture_pil)#.convert('RGB'))
@@ -137,7 +138,7 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
         #opencv_capture = opencv_capture[:, :, ::-1].copy() # Converting from rgb to bgr
         #(h, w) = opencv_capture.shape[:2]
         capture = np.array(capture)
-        capture = capture[:, :, ::-1].copy() # Converting from rgb to bgr
+        #capture = capture[:, :, ::-1].copy() # Converting from rgb to bgr
         (h, w) = capture.shape[:2]
 
         #capture_blob = cv2.dnn.blobFromImage(opencv_capture)
