@@ -51,7 +51,7 @@ if upload is not None:
 	c2.header("Output")
 	#frame = util.preprocess_image(mtcnn, model, cmodel, IDX_TO_CLASS, upload)
 	#frame = util.preprocess_image(caffe_model, model, cmodel, IDX_TO_CLASS, upload)
-	frame = util.preprocess_image(model_name, model, cmodel, IDX_TO_CLASS, upload)
+	frame = preprocess_image(model_name, model, cmodel, IDX_TO_CLASS, upload)
 	#frame.save("withoutmask.jpg")
 	#print(type(frame))
 	#print(frame.size)
