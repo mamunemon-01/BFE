@@ -19,7 +19,7 @@ def load_mtcnn_detector():
     mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
     return mtcnn
 
-@st.cache
+@st.cache(hash_funcs={"cv2.dnn.Net": lambda _: None})
 def load_caffe_detector():
     PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
     CAFFEMODEL_PATH = os.path.join(ABS_PATH + '/caffe_model_data/weights.caffemodel')
