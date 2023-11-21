@@ -6,7 +6,8 @@ from PIL import Image#, ImageFont
 #import joblib
 import os#, sys
 #import torch
-import util
+#import util
+from util import load_models, load_mapping, preprocess_image
 #import cv2
 
 st.markdown('<h1 style="color:blue;">A Machine Learning Approach to Recognize Masked Facial Expressions of the Bangladeshi People</h1>', unsafe_allow_html = True)
@@ -31,6 +32,10 @@ c2 = st.container()
 
 #cmodel = joblib.load('./sgdc_calibrated0.sav')
 
+model, cmodel = load_models()
+
+IDX_TO_CLASS = load_mapping()
+
 if upload is not None:
 	img = Image.open(upload)
 	#container.image(img)
@@ -46,7 +51,7 @@ if upload is not None:
 	c2.header("Output")
 	#frame = util.preprocess_image(mtcnn, model, cmodel, IDX_TO_CLASS, upload)
 	#frame = util.preprocess_image(caffe_model, model, cmodel, IDX_TO_CLASS, upload)
-	frame = util.preprocess_image(model_name, util.model, util.cmodel, util.IDX_TO_CLASS, upload)
+	frame = util.preprocess_image(model_name, model, cmodel, IDX_TO_CLASS, upload)
 	#frame.save("withoutmask.jpg")
 	#print(type(frame))
 	#print(frame.size)

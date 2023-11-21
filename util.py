@@ -6,7 +6,7 @@ from PIL import Image, ImageFont, ImageDraw
 import os
 import cv2
 import joblib
-#import streamlit as st
+import streamlit as st
 
 
 ABS_PATH = os.path.dirname(__file__)
@@ -14,26 +14,37 @@ ABS_PATH = os.path.dirname(__file__)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-#@st.cache
+@st.cache
+def load_mtcnn_detector():
+    mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
+    return mtcnn
 
-mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
+@st.cache
+def load_caffe_detector():
+    PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
+    CAFFEMODEL_PATH = os.path.join(ABS_PATH + '/caffe_model_data/weights.caffemodel')
 
-PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
-CAFFEMODEL_PATH = os.path.join(ABS_PATH + '/caffe_model_data/weights.caffemodel')
+    caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
 
-caffe_model = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
+    caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+    caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
-caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+    
+@st.cache
+def load_models():
+    model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=device).eval()
 
-model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=device).eval()
+    C_SVM_PATH = os.path.join(ABS_PATH, 'sgdc_calibrated0.sav')
+    #print(C_SVM_PATH, end = '\n\n')
+    cmodel = joblib.load(C_SVM_PATH)
 
-C_SVM_PATH = os.path.join(ABS_PATH, 'sgdc_calibrated0.sav')
-#print(C_SVM_PATH, end = '\n\n')
-cmodel = joblib.load(C_SVM_PATH)
+    return model, cmodel
 
-IDX2CLS = os.path.join(ABS_PATH, 'idx2cls.npy')
-IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
+@st.cache
+def load_mapping():
+    IDX2CLS = os.path.join(ABS_PATH, 'idx2cls.npy')
+    IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
+    return IDX_TO_CLASS
 
 def diag(x1, y1, x2, y2):
     return np.linalg.norm([x2 - x1, y2 - y1])
@@ -130,10 +141,12 @@ def preprocess_image(detector, face_extractor, clf, expressions, path, transform
     #iframe = transform(Image.fromarray(capture_rgb))
     
     if detector == "MTCNN":
+        mtcnn = load_mtcnn_detector()
         #boxes, probs = detector.detect(iframe)
         boxes, probs = mtcnn.detect(iframe)
         if boxes is None: boxes, probs = [], []
     else:
+        caffe_model = load_caffe_detector()
         #opencv_capture = np.array(capture)
         #opencv_capture = opencv_capture[:, :, ::-1].copy() # Converting from rgb to bgr
         #(h, w) = opencv_capture.shape[:2]
