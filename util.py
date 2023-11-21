@@ -29,6 +29,7 @@ def load_caffe_detector():
     caffe_model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
     caffe_model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
+    return caffe_model
     
 @st.cache
 def load_models():
