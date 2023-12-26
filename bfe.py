@@ -57,4 +57,4 @@ if upload is not None:
 	#print(frame.size)
 	c2.image(frame.resize((width, height), Image.BILINEAR))
 	# footer
-	st.markdown('<footer><p>Thanks for using this app. Please, <b style="color:yellow, outline-color:yellow;">star</b> it in <a href="https://github.com/mamunemon-01/BFE/">GitHub</a></p><p>Developer: <a href="https://www.linkedin.com/in/mamunai/">Mamun Al Imran</a></p><p>Email: <a href="mailto:mamunai0369@gmail.com">mamunai0369@gmail.com</a></p>', unsafe_allow_html=True)
+	#st.markdown('<footer><p>Thanks for using this app. Please, <b style="color:yellow, outline-color:yellow;">star</b> it in <a href="https://github.com/mamunemon-01/BFE/">GitHub</a></p><p>Developer: <a href="https://www.linkedin.com/in/mamunai/">Mamun Al Imran</a></p><p>Email: <a href="mailto:mamunai0369@gmail.com">mamunai0369@gmail.com</a></p>', unsafe_allow_html=True)
