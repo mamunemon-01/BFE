@@ -9,6 +9,7 @@ import os#, sys
 #import util
 from util import load_models, load_mapping, preprocess_image, load_buf
 #import cv2
+from io import BytesIO
 
 st.markdown('<h1 style="color:blue;">A Machine Learning Approach to Recognize Masked Facial Expressions of the Bangladeshi People</h1>', unsafe_allow_html = True)
 st.markdown('<h2 style="color:gray;">Our model classifies facial expressions into the following categories:</h2>', unsafe_allow_html = True)
@@ -36,7 +37,7 @@ model, cmodel = load_models()
 
 IDX_TO_CLASS = load_mapping()
 
-buf = load_buf()
+buf = BytesIO()
 
 if upload is not None:
 	img = Image.open(upload)
