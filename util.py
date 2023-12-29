@@ -50,7 +50,7 @@ def load_mapping():
 
 @st.cache
 def load_buf():
-    buf = bytesIO()
+    buf = BytesIO()
     return buf
 
 def diag(x1, y1, x2, y2):
