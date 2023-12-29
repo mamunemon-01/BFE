@@ -7,7 +7,7 @@ from PIL import Image#, ImageFont
 import os#, sys
 #import torch
 #import util
-from util import load_models, load_mapping, preprocess_image, load_buf
+from util import load_models, load_mapping, preprocess_image#, load_buf
 #import cv2
 from io import BytesIO
 
