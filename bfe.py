@@ -36,6 +36,8 @@ model, cmodel = load_models()
 
 IDX_TO_CLASS = load_mapping()
 
+buf = load_buf()
+
 if upload is not None:
 	img = Image.open(upload)
 	#container.image(img)
@@ -54,7 +56,6 @@ if upload is not None:
 	frame = preprocess_image(model_name, model, cmodel, IDX_TO_CLASS, upload)
 	frame = frame.resize((width, height), Image.BILINEAR)
 	#frame.save("withoutmask.jpg")
-	buf = load_buf()
 	frame.save(buf, format = 'JPEG')
 	byte_frame = buf.getvalue()
 	#print(type(frame))

@@ -48,7 +48,7 @@ def load_mapping():
     IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
     return IDX_TO_CLASS
 
-@st.cache
+@st.cache(hash_funcs={"io": lambda _: None})
 def load_buf():
     buf = BytesIO()
     return buf
