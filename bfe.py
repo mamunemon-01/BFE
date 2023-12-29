@@ -7,7 +7,7 @@ from PIL import Image#, ImageFont
 import os#, sys
 #import torch
 #import util
-from util import load_models, load_mapping, preprocess_image
+from util import load_models, load_mapping, preprocess_image, load_buf
 #import cv2
 
 st.markdown('<h1 style="color:blue;">A Machine Learning Approach to Recognize Masked Facial Expressions of the Bangladeshi People</h1>', unsafe_allow_html = True)
@@ -53,8 +53,12 @@ if upload is not None:
 	#frame = util.preprocess_image(caffe_model, model, cmodel, IDX_TO_CLASS, upload)
 	frame = preprocess_image(model_name, model, cmodel, IDX_TO_CLASS, upload)
 	#frame.save("withoutmask.jpg")
+	buf = load_buf()
+	frame.save(buf, format = 'JPEG')
+	byte_frame = buf.getvalue()
 	#print(type(frame))
 	#print(frame.size)
 	c2.image(frame.resize((width, height), Image.BILINEAR))
+	c2.download_button(label='Download', data = byte_frame, file_name = 'output.png', mime = 'image/jpeg')
 	# footer
 	#st.markdown('<footer><p>Thanks for using this app. Please, <b style="color:yellow, outline-color:yellow;">star</b> it in <a href="https://github.com/mamunemon-01/BFE/">GitHub</a></p><p>Developer: <a href="https://www.linkedin.com/in/mamunai/">Mamun Al Imran</a></p><p>Email: <a href="mailto:mamunai0369@gmail.com">mamunai0369@gmail.com</a></p>', unsafe_allow_html=True)

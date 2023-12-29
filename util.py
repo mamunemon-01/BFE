@@ -7,6 +7,7 @@ import os
 import cv2
 import joblib
 import streamlit as st
+from io import BytesIO
 
 
 ABS_PATH = os.path.dirname(__file__)
@@ -46,6 +47,11 @@ def load_mapping():
     IDX2CLS = os.path.join(ABS_PATH, 'idx2cls.npy')
     IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
     return IDX_TO_CLASS
+
+@st.cache
+def load_buf():
+    buf = bytesIO()
+    return buf
 
 def diag(x1, y1, x2, y2):
     return np.linalg.norm([x2 - x1, y2 - y1])
