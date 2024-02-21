@@ -36,7 +36,7 @@ def load_caffe_detector():
 def load_models():
     model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=device).eval()
 
-    C_SVM_PATH = os.path.join(ABS_PATH, 'sgdc_calibrated0.sav')
+    C_SVM_PATH = os.path.join(ABS_PATH, 'svc_calibrated.sav')#'sgdc_calibrated0.sav')
     #print(C_SVM_PATH, end = '\n\n')
     cmodel = joblib.load(C_SVM_PATH)
 
