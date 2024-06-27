@@ -15,7 +15,7 @@ ABS_PATH = os.path.dirname(__file__)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-@st.cache
+@st.cache_data
 def load_mtcnn_detector():
     mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
     return mtcnn
