@@ -32,7 +32,7 @@ def load_caffe_detector():
 
     return caffe_model
     
-@st.cache
+@st.cache_resource
 def load_models():
     model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=device).eval()
 
@@ -42,7 +42,7 @@ def load_models():
 
     return model, cmodel
 
-@st.cache
+@st.cache_resource
 def load_mapping():
     IDX2CLS = os.path.join(ABS_PATH, 'idx2cls.npy')
     IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
