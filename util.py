@@ -32,7 +32,7 @@ def load_caffe_detector():
 
     return caffe_model
     
-@st.cache_resource
+# @st.cache_resource
 def load_models():
     model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=device).eval()
 
