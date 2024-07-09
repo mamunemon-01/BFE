@@ -15,12 +15,12 @@ ABS_PATH = os.path.dirname(__file__)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-# @st.cache_resource
+@st.cache_resource
 def load_mtcnn_detector():
     mtcnn = MTCNN(keep_all=True, min_face_size=70, device=device)
     return mtcnn
 
-# @st.cache_resource(hash_funcs={"cv2.dnn.Net": lambda _: None})
+@st.cache_resource(hash_funcs={"cv2.dnn.Net": lambda _: None})
 def load_caffe_detector():
     PROTOTXT_PATH = os.path.join(ABS_PATH + '/caffe_model_data/deploy.prototxt')
     CAFFEMODEL_PATH = os.path.join(ABS_PATH + '/caffe_model_data/weights.caffemodel')
@@ -32,7 +32,7 @@ def load_caffe_detector():
 
     return caffe_model
     
-# @st.cache_resource
+@st.cache_resource
 def load_models():
     model = InceptionResnetV1(pretrained='vggface2', dropout_prob=0.6, device=device).eval()
 
@@ -42,7 +42,7 @@ def load_models():
 
     return model, cmodel
 
-# @st.cache_resource
+@st.cache_resource
 def load_mapping():
     IDX2CLS = os.path.join(ABS_PATH, 'idx2cls.npy')
     IDX_TO_CLASS = np.load(IDX2CLS, allow_pickle=True)
